@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;650&display=swap");
+
+:root {
+  --text: #3f3d4a;
+  --text-h: #14121a;
+  --text-muted: #6b6577;
+  --bg: #faf9fc;
+  --surface-subtle: #f1eff7;
+  --surface-elevated: #ffffff;
+  --border: #e2dfe9;
+  --code-bg: #ebe8f2;
+  --accent: #5b21b6;
+  --accent-bg: rgba(91, 33, 182, 0.1);
+  --accent-border: rgba(91, 33, 182, 0.35);
+  --danger: #b91c1c;
+  --shadow-sm: 0 1px 2px rgba(20, 18, 26, 0.06);
+
+  --sans: "Source Sans 3", system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  font: 16px/145% var(--sans);
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #c4bfd4;
+    --text-h: #f4f2fa;
+    --text-muted: #9d96ad;
+    --bg: #121016;
+    --surface-subtle: #1a1724;
+    --surface-elevated: #1f1b2e;
+    --border: #2f2a3d;
+    --code-bg: #252030;
+    --accent: #a78bfa;
+    --accent-bg: rgba(167, 139, 250, 0.12);
+    --accent-border: rgba(167, 139, 250, 0.4);
+    --danger: #f87171;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  }
+}
+
+#root {
+  min-height: 100svh;
+}
+
+body {
+  margin: 0;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  padding: 0.12em 0.35em;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--text-h);
+}
