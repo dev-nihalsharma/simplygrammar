@@ -2,10 +2,35 @@ import type { Grammar, Production } from "./types";
 
 const EPSILON_TOKENS = new Set(["ε", "epsilon", "λ", "eps", "#"]);
 
-function tokenizeRhs(rhs: string): string[] {
+function tokenizeRhs(rhs: string, nonTerminals: Set<string>): string[] {
   const t = rhs.trim();
   if (t === "" || EPSILON_TOKENS.has(t.toLowerCase())) return [];
-  return t.split(/\s+/).filter(Boolean);
+
+  // Spaced notation: `A b C`
+  if (/\s/.test(t)) return t.split(/\s+/).filter(Boolean);
+
+  // Compact notation fallback: `aSb` => ["a", "S", "b"].
+  // We greedily match known non-terminals first, then consume one char.
+  const orderedNTs = [...nonTerminals].sort((a, b) => b.length - a.length);
+  const out: string[] = [];
+  let i = 0;
+  while (i < t.length) {
+    let matched: string | null = null;
+    for (const nt of orderedNTs) {
+      if (nt && t.startsWith(nt, i)) {
+        matched = nt;
+        break;
+      }
+    }
+    if (matched) {
+      out.push(matched);
+      i += matched.length;
+    } else {
+      out.push(t[i]!);
+      i += 1;
+    }
+  }
+  return out;
 }
 
 /** Split alternatives on | not inside (unused) — simple split. */
@@ -32,6 +57,7 @@ function splitAlternatives(s: string): string[] {
 export function parseGrammar(text: string, startOverride?: string): Grammar {
   const productions: Production[] = [];
   const lhsOrder: string[] = [];
+  const rawRows: { left: string; alt: string }[] = [];
 
   for (const line of text.split("\n")) {
     const trimmed = line.trim();
@@ -45,8 +71,16 @@ export function parseGrammar(text: string, startOverride?: string): Grammar {
 
     const alts = splitAlternatives(arrowMatch[2]);
     for (const alt of alts) {
-      productions.push({ left, right: tokenizeRhs(alt) });
+      rawRows.push({ left, alt });
     }
+  }
+
+  const nonTerminals = new Set(lhsOrder);
+  for (const row of rawRows) {
+    productions.push({
+      left: row.left,
+      right: tokenizeRhs(row.alt, nonTerminals),
+    });
   }
 
   if (productions.length === 0) {
